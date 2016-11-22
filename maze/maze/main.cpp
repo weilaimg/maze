@@ -8,16 +8,18 @@
 //  迷宫问题求解...............
 //
 //
+#include <iostream>
+#include <stdlib.h>
+
 #define OK 1
 #define ERROR 0
-#include <iostream>
+#define OVERFLOW -2
 using namespace std;
 typedef int Status;
-
-char maze[100][100];
-
-
-
+typedef short SElemType;
+#define MAXSIZE 3000
+char maze[50][50];
+#include "Stack.h"
 Status Init_Maze(){
     int m,n;
     cout << "请输入迷宫的长度：";
@@ -34,6 +36,7 @@ Status Init_Maze(){
     cout << "迷宫初始化完毕！"<< endl;
     return OK;
 }
+
 
 
 int main(){
