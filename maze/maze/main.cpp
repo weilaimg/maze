@@ -93,6 +93,7 @@ Status Find_Way(){                                  //------查找出路算法--
         if(dir==0){
             if(maze[x+1][y] == '0'){
                 Push (S,Make_SType(x, y, dir));
+                maze[x+1][y] = '1';
                 x = x+1;
                 dir = 0;
             } else {
@@ -102,6 +103,7 @@ Status Find_Way(){                                  //------查找出路算法--
         if(dir==1){
             if(maze[x][y+1] == '0'){
                 Push(S, Make_SType(x, y, dir));
+                maze[x][y+1] = '1';
                 y = y+1 ;
                 dir = 0;
             } else {
@@ -111,13 +113,24 @@ Status Find_Way(){                                  //------查找出路算法--
         if(dir==2){
             if(maze[x][y-1] == '0'){
                 Push(S, Make_SType(x, y, dir));
+                maze[x][y-1] = '1';
                 y = y-1 ;
                 dir = 0;
             } else {
                 dir++;
             }
         }
-        if(dir > 2){
+        if(dir==3){
+            if(maze[x-1][y] == '0'){
+                Push(S, Make_SType(x, y, dir));
+                maze[x-1][y] = '1';
+                x = x-1 ;
+                dir = 0;
+            } else {
+                dir++;
+            }
+        }
+        if(dir > 3){
             t = Pop(S)+1;
             if(t != 1){
                 ReMake_SType(t, x, y, dir);
