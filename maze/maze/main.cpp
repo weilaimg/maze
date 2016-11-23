@@ -22,7 +22,7 @@ typedef int Status;                             //--------数据类型自定义-
 typedef short SElemType;
 
 char maze[50][50];                              //-------迷宫的储存结构------------
-bool is_set_point=0;                                //-------迷宫起终点设定标志---------
+SElemType first_point=0,last_point=0;              //-------迷宫起终点设定标志---------
 bool is_set_maze = 0;                               //------迷宫设置标志-------
 #include "Stack.h"                              //---------栈的引入----------
 
@@ -45,26 +45,7 @@ Status Init_Maze(){                         //---------迷宫初始化函数----
     return OK;
 }
 
-Status Set_Point (){                    //-----------设定起点与终点--------
-    int n,m;
-    cout << "请输入起点的坐标(中间用空格分开)：";
-    cin >> n >> m;
-    if(maze[n][m]){
-        cout << "输入坐标无效";
-        return ERROR;
-    }
-    cout << "请输入终点的坐标(中间用空格分开)：";
-    cin >> n >> m;
-    if(maze[n][m]){
-        cout << "输入坐标无效";
-        return ERROR;
-    }
-    is_set_point = 1;
-    cout << "起点与终点坐标设定完成" << endl;
-    return OK;
-}
-
-SElemType Make_SType(char x , char y ,char dir){            //------制作栈存类型----------
+SElemType Make_SType(int x , int y ,int dir){            //------制作栈存类型----------
     return x*100+y*10+dir;
 }
 
@@ -73,6 +54,32 @@ Status ReMake_SType (SElemType t, int &x,int &y ,int &dir){             //------
     y = t / 10 % 10;
     dir  = t % 10;
     return OK;
+}
+
+Status Set_Point (){                    //-----------设定起点与终点--------
+    int n,m;
+    cout << "请输入起点的坐标(中间用空格分开)：";
+    cin >> n >> m;
+    if(maze[n][m]){
+        cout << "输入坐标无效";
+        return ERROR;
+    }
+    first_point = Make_SType(n, m, 0);
+    cout << "请输入终点的坐标(中间用空格分开)：";
+    cin >> n >> m;
+    if(maze[n][m]){
+        cout << "输入坐标无效";
+        return ERROR;
+    }
+    last_point = Make_SType(n, m, 0);
+    cout << "起点与终点坐标设定完成" << endl;
+    return OK;
+}
+
+
+
+Status Find_Out_Way (){
+    
 }
 
 int main(){
