@@ -64,21 +64,23 @@ Status Set_Point (){                    //-----------设定起点与终点------
         cout << "输入坐标无效";
         return ERROR;
     }
-    first_point = Make_SType(n, m, 0);
+    first_point = Make_SType(n, m, 0);              //------设置全局起点--------
     cout << "请输入终点的坐标(中间用空格分开)：";
     cin >> n >> m;
     if(maze[n][m]){
         cout << "输入坐标无效";
         return ERROR;
     }
-    last_point = Make_SType(n, m, 0);
+    last_point = Make_SType(n, m, 0);               //-------设置全局终点---------
     cout << "起点与终点坐标设定完成" << endl;
     return OK;
 }
 
+Status is_set_point (){
+    return (first_point && last_point);
+}
 
-
-Status Find_Out_Way (){
+Status Find_Way(){
     
 }
 
