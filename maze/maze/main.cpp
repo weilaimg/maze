@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <stdlib.h>
+
 using namespace std;
 
 #define OK 1                                    //-------常用宏定义----------
@@ -23,11 +24,12 @@ typedef short SElemType;
 
 char maze[50][50];                              //-------迷宫的储存结构------------
 
-SElemType first_point=0,last_point=0;              //-------迷宫起终点设定标志---------
-bool is_set_maze = 0;                               //------迷宫设置标志-------
+SElemType first_point=0,last_point=0;           //-------迷宫起终点设定标志---------
+bool is_set_maze = 0;                           //------迷宫设置标志-------
 #include "Stack.h"                              //---------栈的引入----------
-SqStack S;
-Status Init_Maze(){                         //---------迷宫初始化函数------
+#include "statement.h"
+SqStack S;                                      //--------设置全局栈------
+Status Init_Maze(){                             //---------迷宫初始化函数------
     memset(maze, '1', sizeof(maze));
     int m,n;
     cout << "请输入迷宫的高度：";
@@ -46,7 +48,7 @@ Status Init_Maze(){                         //---------迷宫初始化函数----
     return OK;
 }
 
-SElemType Make_SType(int x , int y ,int dir){            //------制作栈存类型----------
+SElemType Make_SType(int x , int y ,int dir){                           //------制作栈存类型----------
     return x*100+y*10+dir;
 }
 
