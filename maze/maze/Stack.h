@@ -34,10 +34,24 @@ Status Push (SqStack &S,SElemType e){
     return OK;
 }
 
-Status Pop (SqStack &S , SElemType &e){
+SElemType Pop (SqStack &S){
+    SElemType e;
     if(S.top == S. base)
         return ERROR;
     e = *--S.top;
-    return OK;
+    return e;
 }
 
+SElemType Get_Top(SqStack  S){
+    if(S.top == S.base)
+        return 0;
+    return *(S.top-1);
+}
+
+void Traval(SqStack S){
+    SElemType *p = S.base;
+    while(p != S.top){
+        cout << *p << endl;
+        p ++;
+    }
+}

@@ -22,10 +22,11 @@ typedef int Status;                             //--------数据类型自定义-
 typedef short SElemType;
 
 char maze[50][50];                              //-------迷宫的储存结构------------
+
 SElemType first_point=0,last_point=0;              //-------迷宫起终点设定标志---------
 bool is_set_maze = 0;                               //------迷宫设置标志-------
 #include "Stack.h"                              //---------栈的引入----------
-
+SqStack S;
 Status Init_Maze(){                         //---------迷宫初始化函数------
     memset(maze, '1', sizeof(maze));
     int m,n;
@@ -60,14 +61,14 @@ Status Set_Point (){                    //-----------设定起点与终点------
     int n,m;
     cout << "请输入起点的坐标(中间用空格分开)：";
     cin >> n >> m;
-    if(maze[n][m]){
+    if(maze[n][m] == 1){
         cout << "输入坐标无效";
         return ERROR;
     }
     first_point = Make_SType(n, m, 0);              //------设置全局起点--------
     cout << "请输入终点的坐标(中间用空格分开)：";
     cin >> n >> m;
-    if(maze[n][m]){
+    if(maze[n][m] == 1){
         cout << "输入坐标无效";
         return ERROR;
     }
@@ -76,14 +77,66 @@ Status Set_Point (){                    //-----------设定起点与终点------
     return OK;
 }
 
-Status is_set_point (){
+Status is_set_point (){                             //------检查是否设置起终点-------
     return (first_point && last_point);
 }
 
-Status Find_Way(){
-    
+
+
+Status Find_Way(){                                  //------查找出路算法-------
+    int x,y,dir,f_x,f_y,f_dir;
+    SElemType t;
+    InitStack(S);
+    ReMake_SType(first_point, x, y, dir);
+    ReMake_SType(last_point, f_x, f_y, f_dir);
+    while(x != f_x || y != f_y){
+        if(dir==0){
+            if(maze[x+1][y] == '0'){
+                Push (S,Make_SType(x, y, dir));
+                x = x+1;
+                dir = 0;
+            } else {
+                dir ++;
+            }
+        }
+        if(dir==1){
+            if(maze[x][y+1] == '0'){
+                Push(S, Make_SType(x, y, dir));
+                y = y+1 ;
+                dir = 0;
+            } else {
+                dir++;
+            }
+        }
+        if(dir==2){
+            if(maze[x][y-1] == '0'){
+                Push(S, Make_SType(x, y, dir));
+                y = y-1 ;
+                dir = 0;
+            } else {
+                dir++;
+            }
+        }
+        if(dir > 2){
+            t = Pop(S)+1;
+            if(t != 1){
+                ReMake_SType(t, x, y, dir);
+            } else {
+                return ERROR;
+            }
+        }
+    }
+    return OK;
 }
 
 int main(){
+    Init_Maze();
+    Set_Point();
+    if(Find_Way()){
+        cout << "我活着出来啦！！！"<< endl;
+        Traval(S);
+    }
+    else
+        cout << "完" << endl;
     
 }
