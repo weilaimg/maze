@@ -30,10 +30,10 @@ SqStack S;
 Status Init_Maze(){                         //---------迷宫初始化函数------
     memset(maze, '1', sizeof(maze));
     int m,n;
-    cout << "请输入迷宫的长度：";
-    cin >> m ;
+    cout << "请输入迷宫的高度：";
+    cin >> n ;
     cout << "请输入迷宫的宽度：";
-    cin >> n;
+    cin >> m;
     cout << "请输入一个长为" << m << "宽为" << n << "的，由0与1构成的迷宫"<< endl;
     cout << "其中，0为迷宫中的通路，1为迷宫中的障碍"<< endl;
     for (int i = 1 ; i <= n ; i++){             //---------迷宫输入--------
@@ -61,14 +61,14 @@ Status Set_Point (){                    //-----------设定起点与终点------
     int n,m;
     cout << "请输入起点的坐标(中间用空格分开)：";
     cin >> n >> m;
-    if(maze[n][m] == 1){
+    if(maze[n][m] == '1'){
         cout << "输入坐标无效";
         return ERROR;
     }
     first_point = Make_SType(n, m, 0);              //------设置全局起点--------
     cout << "请输入终点的坐标(中间用空格分开)：";
     cin >> n >> m;
-    if(maze[n][m] == 1){
+    if(maze[n][m] == '1'){
         cout << "输入坐标无效";
         return ERROR;
     }
@@ -89,15 +89,15 @@ Status Find_Way(){                                  //------查找出路算法--
     InitStack(S);
     ReMake_SType(first_point, x, y, dir);
     ReMake_SType(last_point, f_x, f_y, f_dir);
-    while(x != f_x || y != f_y){
+    while(x != f_x || y != f_y){                        //-----四个方向查找路径非递归算法
         if(dir==0){
-            if(maze[x+1][y] == '0'){
-                Push (S,Make_SType(x, y, dir));
-                maze[x+1][y] = '1';
-                x = x+1;
-                dir = 0;
-            } else {
-                dir ++;
+            if(maze[x+1][y] == '0'){                    //-----若此方向是路-------
+                Push (S,Make_SType(x, y, dir));         //-----将所在点入栈-------
+                maze[x+1][y] = '1';                     //-----将所在点改为墙------
+                x = x+1;                                //-----修改所在点位置------
+                dir = 0;                                //-----下一方向初始化------
+            } else {                                    //-----若该方向为墙-----
+                dir ++;                                 //-----修改方向为下一方向------
             }
         }
         if(dir==1){
@@ -130,16 +130,16 @@ Status Find_Way(){                                  //------查找出路算法--
                 dir++;
             }
         }
-        if(dir > 3){
-            t = Pop(S)+1;
-            if(t != 1){
-                ReMake_SType(t, x, y, dir);
-            } else {
-                return ERROR;
+        if(dir > 3){                                        //------若四个方向都为墙-----
+            t = Pop(S)+1;                                   //------从栈中弹出上一点，并将方向改为下一方向
+            if(t != 1){                                     //------若栈非空-----
+                ReMake_SType(t, x, y, dir);                 //------解析栈存元素------
+            } else {                                        //------若栈空-------
+                return ERROR;                               //------返回无出路状态-------
             }
         }
     }
-    return OK;
+    return OK;                                              //-----若找到出口，返回成功------
 }
 
 int main(){
