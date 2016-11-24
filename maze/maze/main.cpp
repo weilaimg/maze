@@ -189,14 +189,14 @@ Status Find_Way(){                                  //------查找出路算法--
     return OK;                                              //-----若找到出口，返回成功------
 }
 
-Status clear_maze(){
-    all_wall();
+Status clear_maze(){                                        //-----清空迷宫-------
+    all_wall();                                             //-----置于初始状态----
     first_point=0,last_point=0;
     is_set_maze = 0;
     return OK;
 }
 
-char menu(){
+char menu(){                                                //----主菜单-----
     char select;
     cout << "               ==============              \n";
     cout << "               迷宫游戏求解方案               \n";
@@ -212,23 +212,23 @@ char menu(){
     return select;
 }
 
-Status scan_maze(){
-    if(is_set_maze == 1){
+Status scan_maze(){                                         //-----查看迷宫------
+    if(is_set_maze == 1){                                   //-----若迷宫存在-----
         int n,m,dir;
         ReMake_SType(maze_size, n, m, dir);
         cout << "当前迷宫为：\n";
-        for(int i = 1 ; i <= n ; i++){
+        for(int i = 1 ; i <= n ; i++){                      //-----输出迷宫--------
             for(int j = 1 ; j<= m ; j++){
                 cout << maze[i][j];
             }
             cout << '\n';
         }
-        if(is_set_point()){
+        if(is_set_point()){                                 //----若设置起止点------
             ReMake_SType(first_point, n, m, dir);
-            cout << "迷宫的起点为：("<<n<<','<<m<<')'<<endl;
+            cout << "迷宫的起点为：("<<n<<','<<m<<')'<<endl;   //----输出起止点--------
             ReMake_SType(last_point, n, m, dir);
             cout << "迷宫的终点为：("<<n<<','<<m<<')'<<endl;
-        } else {
+        } else {                                            //------否则退出---------
             cout << "目前未设置迷宫起点与终点...\n";
         }
     } else {
@@ -237,12 +237,12 @@ Status scan_maze(){
     return OK;
 }
 
-void Traval(SqStack S){
+void Traval(SqStack S){                                     //------反向输出顺序栈算法-----
     int x,y,dir;
     SElemType *p = S.base;
     while(p != S.top){
         ReMake_SType(*p, x, y, dir);
-        cout << "在点(" << x << ',' << y << "),向";
+        cout << "在点(" << x << ',' << y << "),向";          //------解析栈存意义----------
         if(dir == 0)
             cout << "下";
         else if(dir == 1)
