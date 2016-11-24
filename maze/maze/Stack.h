@@ -47,11 +47,3 @@ SElemType Get_Top(SqStack  S){
         return 0;
     return *(S.top-1);
 }
-
-void Traval(SqStack S){
-    SElemType *p = S.base;
-    while(p != S.top){
-        cout << *p << endl;
-        p ++;
-    }
-}

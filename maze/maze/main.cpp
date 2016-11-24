@@ -183,6 +183,7 @@ char menu(){
     cout << "3.查看迷宫                                   \n";
     cout << "4.查找通路                                   \n";
     cout << "5.清空迷宫                                   \n";
+    cout << "6.退出程序                                   \n";
     cout << "请输入你的选择：";
     cin >> select;
     return select;
@@ -213,6 +214,25 @@ Status scan_maze(){
     return OK;
 }
 
+void Traval(SqStack S){
+    int x,y,dir;
+    SElemType *p = S.base;
+    while(p != S.top){
+        ReMake_SType(*p, x, y, dir);
+        cout << "在点(" << x << ',' << y << "),向";
+        if(dir == 0)
+            cout << "下";
+        else if(dir == 1)
+            cout << "右";
+        else if(dir == 2)
+            cout << "左";
+        else if(dir == 3)
+            cout << "上";
+        cout << "走\n";
+        p ++;
+    }
+}
+
 int main(){
     while (1){
         char select,p;
@@ -220,7 +240,7 @@ int main(){
         select = menu();
         switch(select){
             case '1':cls();Init_Maze();break;
-            case '2':cls();Set_Point();break;
+            case '2':cls();scan_maze();Set_Point();break;
             case '3':cls();
                 if(scan_maze() == 0){
                     cout << "未设置迷宫，键入任意键继续...\n";
@@ -230,8 +250,20 @@ int main(){
                     cin >> p;
                 }
                 break;
-            case '4':cls();Find_Way();break;
+            case '4':cls();
+                scan_maze();
+                if(Find_Way()){
+                    cout << "已找到走出迷宫的路径，路径为：\n";
+                    Traval(S);
+                } else {
+                    cout << "未找到走出迷宫的路径\n";
+                }
+                cout << "键入任意键重新开始...\n";
+                cin >> p;
+                clear_maze();
+                break;
             case '5':cls();clear_maze();break;
+            case '6':exit(0);
             default :cls();continue;
         }
     }
