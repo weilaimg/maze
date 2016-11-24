@@ -27,7 +27,7 @@ using namespace std;
 #define MAX_MAZE_SIZE 50
 
 typedef int Status;                             //--------数据类型自定义---------
-typedef short SElemType;
+typedef int SElemType;
 
 char maze[MAX_MAZE_SIZE][MAX_MAZE_SIZE];                  //-------迷宫的储存结构------------
 
@@ -90,12 +90,12 @@ Status Init_Maze(){                             //---------迷宫初始化函数
 }
 
 SElemType Make_SType(int x , int y ,int dir){                           //------制作栈存类型----------
-    return x*100+y*10+dir;
+    return x*1000+y*10+dir;
 }
 
 Status ReMake_SType (SElemType t, int &x,int &y ,int &dir){             //---------解码栈存类型------
-    x  = t / 100;
-    y = t / 10 % 10;
+    x  = t / 1000;
+    y = t / 10 % 100;
     dir  = t % 10;
     return OK;
 }
@@ -105,16 +105,14 @@ Status Set_Point (){                    //-----------设定起点与终点------
     cout << "请输入起点的坐标(例：左上角：1 1)：";
     cin >> n >> m;
     if(maze[n][m] == '1'){
-        cout << "输入坐标无效,输入任意键返回...";
-        any_press();
+        cout << "输入坐标无效,";
         return ERROR;
     }
     first_point = Make_SType(n, m, 0);              //------设置全局起点--------
     cout << "请输入终点的坐标(中间用空格分开)：";
     cin >> n >> m;
     if(maze[n][m] == '1'){
-        cout << "输入坐标无效,输入任意键返回...";
-        any_press();
+        cout << "输入坐标无效,";
         return ERROR;
     }
     last_point = Make_SType(n, m, 0);               //-------设置全局终点---------
@@ -242,7 +240,7 @@ void Traval(SqStack S){                                     //------反向输出
     SElemType *p = S.base;
     while(p != S.top){
         ReMake_SType(*p, x, y, dir);
-        cout << "在点(" << x << ',' << y << "),向";          //------解析栈存意义----------
+        cout << "(" << x << ',' << y << ",";          //------解析栈存意义----------
         if(dir == 0)
             cout << "下";
         else if(dir == 1)
@@ -251,7 +249,7 @@ void Traval(SqStack S){                                     //------反向输出
             cout << "左";
         else if(dir == 3)
             cout << "上";
-        cout << "走\n";
+        cout << ")\n";
         p ++;
     }
 }
@@ -266,8 +264,17 @@ int main(){
         cls();
         select = menu();
         switch(select){
-            case '1':cls();Init_Maze();break;
-            case '2':cls();scan_maze();Set_Point();break;
+            case '1':cls();
+                Init_Maze();
+                cout << "键入任意键继续...\n";
+                any_press();
+                break;
+            case '2':cls();
+                scan_maze();
+                Set_Point();
+                cout << "键入任意键继续...\n";
+                any_press();
+                break;
             case '3':cls();
                 if(scan_maze() == 0){
                     cout << "未设置迷宫，键入任意键继续...\n";
