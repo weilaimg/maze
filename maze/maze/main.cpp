@@ -8,6 +8,13 @@
 //  迷宫问题求解...............
 //
 //
+//
+//  若不支持UTF-8编码
+//  可在GCC中添加以下配置：
+//  -fexec-charset=GBK
+//  -finput-charset=UTF-8
+//
+//
 
 #include <iostream>
 #include <stdlib.h>
@@ -17,19 +24,40 @@ using namespace std;
 #define ERROR 0
 #define OVERFLOW -2
 #define MAXSIZE 3000
+#define MAX_MAZE_SIZE 50
 
 typedef int Status;                             //--------数据类型自定义---------
 typedef short SElemType;
 
-char maze[50][50];                              //-------迷宫的储存结构------------
+char maze[MAX_MAZE_SIZE][MAX_MAZE_SIZE];                  //-------迷宫的储存结构------------
 
 SElemType first_point=0,last_point=0,maze_size;           //-------迷宫起终点设定标志---------
 bool is_set_maze = 0;                           //------迷宫设置标志-------
 #include "Stack.h"                              //---------栈的引入----------
 #include "statement.h"
 SqStack S;                                      //--------设置全局栈------
+
+void any_press(){
+    char p;
+    //p = getch();                              //如果编译系统为windows，用此句作为输入
+    cin >> p;                                   //如果编译系统非windows，尽量用此句输入
+}
+
+
+void cls(){
+    //system("cls");                              //如果编译系统为windows，用此句作为清屏
+    for(int i = 0 ; i < 50 ; i++)               //如果编译系统非windows，尽量用此句清屏
+            cout << '\n';
+}
+
+void all_wall(){
+    for(int i = 0 ; i < MAX_MAZE_SIZE ; i++)
+        for (int j = 0 ; j < MAX_MAZE_SIZE ; j++)
+            maze[i][j] = '1';
+}
+
 Status Init_Maze(){                             //---------迷宫初始化函数------
-    memset(maze, '1', sizeof(maze));
+    all_wall();
     int m,n;
     char charset='0';
     cout << "               ==============              \n";
@@ -78,7 +106,7 @@ Status Set_Point (){                    //-----------设定起点与终点------
     cin >> n >> m;
     if(maze[n][m] == '1'){
         cout << "输入坐标无效,输入任意键返回...";
-        cin >> n;
+        any_press();
         return ERROR;
     }
     first_point = Make_SType(n, m, 0);              //------设置全局起点--------
@@ -86,7 +114,7 @@ Status Set_Point (){                    //-----------设定起点与终点------
     cin >> n >> m;
     if(maze[n][m] == '1'){
         cout << "输入坐标无效,输入任意键返回...";
-        cin >> n;
+        any_press();
         return ERROR;
     }
     last_point = Make_SType(n, m, 0);               //-------设置全局终点---------
@@ -161,13 +189,8 @@ Status Find_Way(){                                  //------查找出路算法--
     return OK;                                              //-----若找到出口，返回成功------
 }
 
-void cls(){
-    for(int i = 0 ; i < 50 ; i++)
-        cout << '\n';
-}
-
 Status clear_maze(){
-    memset(maze, '1', sizeof(maze));
+    all_wall();
     first_point=0,last_point=0;
     is_set_maze = 0;
     return OK;
@@ -233,9 +256,13 @@ void Traval(SqStack S){
     }
 }
 
+
+
+
+
 int main(){
     while (1){
-        char select,p;
+        char select;
         cls();
         select = menu();
         switch(select){
@@ -244,10 +271,10 @@ int main(){
             case '3':cls();
                 if(scan_maze() == 0){
                     cout << "未设置迷宫，键入任意键继续...\n";
-                    cin >> p;
+                    any_press();
                 } else {
                     cout << "键入任意键继续...\n";
-                    cin >> p;
+                    any_press();
                 }
                 break;
             case '4':cls();
@@ -259,7 +286,7 @@ int main(){
                     cout << "未找到走出迷宫的路径\n";
                 }
                 cout << "键入任意键重新开始...\n";
-                cin >> p;
+                any_press();
                 clear_maze();
                 break;
             case '5':cls();clear_maze();break;

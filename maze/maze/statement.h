@@ -21,3 +21,5 @@ void cls();
 char menu();
 Status clear_maze();
 Status scan_maze();
+void any_press();
+void all_wall();
