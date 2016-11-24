@@ -17,3 +17,7 @@ Status ReMake_SType (SElemType t, int &x,int &y ,int &dir);
 Status Set_Point ();
 Status is_set_point ();
 Status Find_Way();
+void cls();
+char menu();
+Status clear_maze();
+Status scan_maze();

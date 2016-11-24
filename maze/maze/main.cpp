@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include <stdlib.h>
-
 using namespace std;
 
 #define OK 1                                    //-------常用宏定义----------
@@ -24,7 +23,7 @@ typedef short SElemType;
 
 char maze[50][50];                              //-------迷宫的储存结构------------
 
-SElemType first_point=0,last_point=0;           //-------迷宫起终点设定标志---------
+SElemType first_point=0,last_point=0,maze_size;           //-------迷宫起终点设定标志---------
 bool is_set_maze = 0;                           //------迷宫设置标志-------
 #include "Stack.h"                              //---------栈的引入----------
 #include "statement.h"
@@ -32,17 +31,31 @@ SqStack S;                                      //--------设置全局栈------
 Status Init_Maze(){                             //---------迷宫初始化函数------
     memset(maze, '1', sizeof(maze));
     int m,n;
+    char charset='0';
+    cout << "               ==============              \n";
+    cout << "                迷宫游戏初始化               \n";
+    cout << "               ==============              \n";
     cout << "请输入迷宫的高度：";
     cin >> n ;
     cout << "请输入迷宫的宽度：";
     cin >> m;
-    cout << "请输入一个长为" << m << "宽为" << n << "的，由0与1构成的迷宫"<< endl;
+    cout << "请输入一个高为" << n << "宽为" << m << "的，由0与1构成的迷宫"<< endl;
     cout << "其中，0为迷宫中的通路，1为迷宫中的障碍"<< endl;
     for (int i = 1 ; i <= n ; i++){             //---------迷宫输入--------
         for (int j = 1 ; j <= m ; j++){
             cin >> maze[i][j];
+            if(maze[i][j] != '0' && maze [i][j] != '1'){
+                charset = '1';
+            }
         }
     }
+    if(charset == '1'){
+        cout << "含有非法字符，迷宫初始化失败，键入任意键退出...";
+        cin >> charset;
+        clear_maze();
+        return ERROR;
+    }
+    maze_size =Make_SType(n, m, 0);
     is_set_maze = 1;
     cout << "迷宫初始化完毕！"<< endl;
     return OK;
@@ -61,17 +74,19 @@ Status ReMake_SType (SElemType t, int &x,int &y ,int &dir){             //------
 
 Status Set_Point (){                    //-----------设定起点与终点--------
     int n,m;
-    cout << "请输入起点的坐标(中间用空格分开)：";
+    cout << "请输入起点的坐标(例：左上角：1 1)：";
     cin >> n >> m;
     if(maze[n][m] == '1'){
-        cout << "输入坐标无效";
+        cout << "输入坐标无效,输入任意键返回...";
+        cin >> n;
         return ERROR;
     }
     first_point = Make_SType(n, m, 0);              //------设置全局起点--------
     cout << "请输入终点的坐标(中间用空格分开)：";
     cin >> n >> m;
     if(maze[n][m] == '1'){
-        cout << "输入坐标无效";
+        cout << "输入坐标无效,输入任意键返回...";
+        cin >> n;
         return ERROR;
     }
     last_point = Make_SType(n, m, 0);               //-------设置全局终点---------
@@ -86,6 +101,8 @@ Status is_set_point (){                             //------检查是否设置�
 
 
 Status Find_Way(){                                  //------查找出路算法-------
+    if(!is_set_point()||is_set_maze == 0)
+        return ERROR;
     int x,y,dir,f_x,f_y,f_dir;
     SElemType t;
     InitStack(S);
@@ -144,14 +161,79 @@ Status Find_Way(){                                  //------查找出路算法--
     return OK;                                              //-----若找到出口，返回成功------
 }
 
-int main(){
-    Init_Maze();
-    Set_Point();
-    if(Find_Way()){
-        cout << "我活着出来啦！！！"<< endl;
-        Traval(S);
+void cls(){
+    for(int i = 0 ; i < 50 ; i++)
+        cout << '\n';
+}
+
+Status clear_maze(){
+    memset(maze, '1', sizeof(maze));
+    first_point=0,last_point=0;
+    is_set_maze = 0;
+    return OK;
+}
+
+char menu(){
+    char select;
+    cout << "               ==============              \n";
+    cout << "               迷宫游戏求解方案               \n";
+    cout << "               ==============              \n";
+    cout << "1.创建新迷宫              迷宫状态：";is_set_maze?cout << "存在迷宫":cout << "无迷宫";cout <<'\n';
+    cout << "2.设置起点与终点           起终点状态：";is_set_point()?cout << "已设置":cout << "未设置";cout <<'\n';
+    cout << "3.查看迷宫                                   \n";
+    cout << "4.查找通路                                   \n";
+    cout << "5.清空迷宫                                   \n";
+    cout << "请输入你的选择：";
+    cin >> select;
+    return select;
+}
+
+Status scan_maze(){
+    if(is_set_maze == 1){
+        int n,m,dir;
+        ReMake_SType(maze_size, n, m, dir);
+        cout << "当前迷宫为：\n";
+        for(int i = 1 ; i <= n ; i++){
+            for(int j = 1 ; j<= m ; j++){
+                cout << maze[i][j];
+            }
+            cout << '\n';
+        }
+        if(is_set_point()){
+            ReMake_SType(first_point, n, m, dir);
+            cout << "迷宫的起点为：("<<n<<','<<m<<')'<<endl;
+            ReMake_SType(last_point, n, m, dir);
+            cout << "迷宫的终点为：("<<n<<','<<m<<')'<<endl;
+        } else {
+            cout << "目前未设置迷宫起点与终点...\n";
+        }
+    } else {
+        return ERROR;
     }
-    else
-        cout << "完" << endl;
-    
+    return OK;
+}
+
+int main(){
+    while (1){
+        char select,p;
+        cls();
+        select = menu();
+        switch(select){
+            case '1':cls();Init_Maze();break;
+            case '2':cls();Set_Point();break;
+            case '3':cls();
+                if(scan_maze() == 0){
+                    cout << "未设置迷宫，键入任意键继续...\n";
+                    cin >> p;
+                } else {
+                    cout << "键入任意键继续...\n";
+                    cin >> p;
+                }
+                break;
+            case '4':cls();Find_Way();break;
+            case '5':cls();clear_maze();break;
+            default :cls();continue;
+        }
+    }
+    return 0;
 }
