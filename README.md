@@ -4,3 +4,17 @@
 
 ##### 2016-11-22
 
+
+-------
+PS:虽然推到了git-hub上，但下载后还是没有解决中文乱码问题。后来查到中文乱码是因为Windows默认无法编译UTF-8编码的中文，因此在这里贴出Windows下CodeBlocks编译UTF-8类型中文的解决方案。
+CodeBlocks菜单栏-Settings-compiler 选择GNU GCC COMPILER 在下面有一个“Other options”选项卡
+
+点击Other Options后在下面空白处输入配置
+
+```
+-fexec-charset=GBK
+-finput-charset=UTF-8
+```
+#####2016-11-24
+
+
