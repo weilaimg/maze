@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include <fstream>
 using namespace std;
 
 #define OK 1                                    //-------常用宏定义----------
@@ -25,6 +26,8 @@ using namespace std;
 #define OVERFLOW -2
 #define MAXSIZE 3000
 #define MAX_MAZE_SIZE 50
+#define IN_FILE_PATH "/Users/weilai/maze/maze/maze/infile.txt"
+#define OUT_FILE_PATH "/Users/weilai/maze/maze/maze/outfile.txt"
 
 typedef int Status;                             //--------数据类型自定义---------
 typedef int SElemType;
@@ -78,9 +81,7 @@ Status Init_Maze(){                             //---------迷宫初始化函数
         }
     }
     if(charset == '1'){
-        cout << "含有非法字符，迷宫初始化失败，键入任意键退出...";
-        cin >> charset;
-        clear_maze();
+        cout << "含有非法字符，迷宫初始化失败，";
         return ERROR;
     }
     maze_size =Make_SType(n, m, 0);
@@ -88,6 +89,52 @@ Status Init_Maze(){                             //---------迷宫初始化函数
     cout << "迷宫初始化完毕！"<< endl;
     return OK;
 }
+
+Status File_Init_Maze(){                             //---------迷宫初始化函数------
+    ifstream cin(IN_FILE_PATH);
+    if(!cin){
+        cout << "未找到文件，";
+        return ERROR;
+    }
+    all_wall();
+    int m,n;
+    char charset='0';
+    cin >> n;
+    cin >> m;
+    for (int i = 1 ; i <= n ; i++){             //---------迷宫输入--------
+        for (int j = 1 ; j <= m ; j++){
+            cin >> maze[i][j];
+            if(maze[i][j] != '0' && maze [i][j] != '1'){
+                charset = '1';
+            }
+        }
+    }
+    if(charset == '1'){
+        cout << "含有非法字符，迷宫初始化失败，";
+        clear_maze();
+        return ERROR;
+    }
+    maze_size =Make_SType(n, m, 0);
+    is_set_maze = 1;
+    int sn,sm;
+    cin >> sn >> sm;
+    if(maze[sn][sm] == '1'){
+        cout << "输入起点坐标无效,";
+        clear_maze();
+        return ERROR;
+    }
+    first_point = Make_SType(sn, sm, 0);              //------设置全局起点--------
+    cin >> sn >> sm;
+    if(maze[sn][sm] == '1'){
+        cout << "输入终点坐标无效,";
+        clear_maze();
+        return ERROR;
+    }
+    last_point = Make_SType(sn, sm, 0);               //-------设置全局终点---------
+    cout << "迷宫初始化完毕！"<< endl;
+    return OK;
+}
+
 
 SElemType Make_SType(int x , int y ,int dir){                           //------制作栈存类型----------
     return x*1000+y*10+dir;
@@ -201,10 +248,12 @@ char menu(){                                                //----主菜单-----
     cout << "               ==============              \n";
     cout << "1.创建新迷宫              迷宫状态：";is_set_maze?cout << "存在迷宫":cout << "无迷宫";cout <<'\n';
     cout << "2.设置起点与终点           起终点状态：";is_set_point()?cout << "已设置":cout << "未设置";cout <<'\n';
-    cout << "3.查看迷宫                                   \n";
-    cout << "4.查找通路                                   \n";
-    cout << "5.清空迷宫                                   \n";
-    cout << "6.退出程序                                   \n";
+    cout << "3.从文件读入迷宫                              \n";
+    cout << "4.查看迷宫                                   \n";
+    cout << "5.查找通路并显示到屏幕                         \n";
+    cout << "6.查找通路并写入到文件                         \n";
+    cout << "7.清空迷宫                                   \n";
+    cout << "8.退出程序                                   \n";
     cout << "请输入你的选择：";
     cin >> select;
     return select;
@@ -254,7 +303,25 @@ void Traval(SqStack S){                                     //------反向输出
     }
 }
 
-
+void File_Traval(SqStack S){                                     //------反向输出顺序栈算法-----
+    int x,y,dir;
+    ofstream cout(OUT_FILE_PATH);
+    SElemType *p = S.base;
+    while(p != S.top){
+        ReMake_SType(*p, x, y, dir);
+        cout << "(" << x << ',' << y << ",";          //------解析栈存意义----------
+        if(dir == 0)
+            cout << "下";
+        else if(dir == 1)
+            cout << "右";
+        else if(dir == 2)
+            cout << "左";
+        else if(dir == 3)
+            cout << "上";
+        cout << ")\n";
+        p ++;
+    }
+}
 
 
 
@@ -276,6 +343,11 @@ int main(){
                 any_press();
                 break;
             case '3':cls();
+                File_Init_Maze();
+                cout << "键入任意键继续...\n";
+                any_press();
+                break;
+            case '4':cls();
                 if(scan_maze() == 0){
                     cout << "未设置迷宫，键入任意键继续...\n";
                     any_press();
@@ -284,7 +356,7 @@ int main(){
                     any_press();
                 }
                 break;
-            case '4':cls();
+            case '5':cls();
                 scan_maze();
                 if(Find_Way()){
                     cout << "已找到走出迷宫的路径，路径为：\n";
@@ -296,8 +368,18 @@ int main(){
                 any_press();
                 clear_maze();
                 break;
-            case '5':cls();clear_maze();break;
-            case '6':exit(0);
+            case '6':if(Find_Way()){
+                File_Traval(S);
+                cout << "已找到走出迷宫的路径，路径已写入输出文件\n";
+            } else {
+                cout << "未找到走出迷宫的路径，文件未被写入\n";
+            }
+                cout << "键入任意键重新开始...\n";
+                any_press();
+                clear_maze();
+                break;
+            case '7':cls();clear_maze();break;
+            case '8':exit(0);
             default :cls();continue;
         }
     }

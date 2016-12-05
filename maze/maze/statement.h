@@ -23,3 +23,5 @@ Status clear_maze();
 Status scan_maze();
 void any_press();
 void all_wall();
+Status File_Init_Maze();
+void File_Traval(SqStack S);
